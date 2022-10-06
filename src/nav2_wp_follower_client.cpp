@@ -20,8 +20,7 @@ namespace husky_gps_navigation {
 GPSWayPointFollowerClient::GPSWayPointFollowerClient()
     : Node("GPSWaypointFollowerClient"), goal_done_(false) {
   gps_waypoint_follower_action_client_ = rclcpp_action::create_client<ClientT>(
-      this->get_node_base_interface(), this->get_node_graph_interface(),
-      this->get_node_logging_interface(), this->get_node_waitables_interface(),
+      this,
       "follow_gps_waypoints");
   this->timer_ = this->create_wall_timer(
       std::chrono::milliseconds(500),
@@ -29,8 +28,11 @@ GPSWayPointFollowerClient::GPSWayPointFollowerClient()
   // number of poses that robot will go throug, specified in yaml file
   // this->declare_parameter("paths", std::vector<std::string>({"0"}));
   std::string chosen_path;
-  this->declare_parameter("chosen_path","path1");
+  this->declare_parameter("chosen_path","path0");
   chosen_path = this->get_parameter("chosen_path").as_string();
+
+  this->declare_parameter(chosen_path + ".waypoints",
+                          std::vector<std::string>({"0"}));
   path_from_yaml_ = loadGPSWaypointsFromYAML(chosen_path);
 
   RCLCPP_INFO(this->get_logger(),
@@ -54,11 +56,10 @@ void GPSWayPointFollowerClient::startWaypointFollowing() {
   if (!this->gps_waypoint_follower_action_client_) {
     RCLCPP_ERROR(this->get_logger(), "Action client not initialized");
   }
-
-  auto is_action_server_ready =
-      gps_waypoint_follower_action_client_->wait_for_action_server(
-          std::chrono::seconds(1));
-  if (!is_action_server_ready) {
+// !this->client_ptr_->wait_for_action_server()
+  // auto is_action_server_ready =
+  //     gps_waypoint_follower_action_client_->wait_for_action_server();
+  if (!this->gps_waypoint_follower_action_client_->wait_for_action_server()) {
     RCLCPP_ERROR(
         this->get_logger(),
         "FollowGPSWaypointsPlugin action server is not available."
@@ -66,6 +67,8 @@ void GPSWayPointFollowerClient::startWaypointFollowing() {
     this->goal_done_ = true;
     return;
   }
+  RCLCPP_INFO(this->get_logger(), "Sending goal");
+
   gps_waypoint_follower_goal_ = ClientT::Goal();
   // Send the goal poses
   gps_waypoint_follower_goal_.gps_poses = path_from_yaml_;

@@ -34,7 +34,7 @@ GPSWaypointCollector::GPSWaypointCollector()
   get_parameter("frequency", frequency_);
   get_parameter("yaml_file_out", yaml_file_out_);
 //   get_parameter("plugin_id", plugin_id_);
-  path_length_ = get_parameter("path_length").as_int();
+  get_parameter("path_length",path_length_);
 
   wp_count_ = 0;
 
@@ -110,7 +110,7 @@ void GPSWaypointCollector::sensorDataCallback(
 void GPSWaypointCollector::dumpCollectedWaypoints() {
   YAML::Emitter waypoints;
   waypoints << YAML::BeginMap;
-  waypoints << YAML::Key << "gps_waypoint_follower_demo";
+  waypoints << YAML::Key << "nav2_wp_follower_client";
   waypoints << YAML::BeginMap;
   waypoints << YAML::Key << "ros__parameters";
 

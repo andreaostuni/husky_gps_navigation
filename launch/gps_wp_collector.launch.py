@@ -31,6 +31,8 @@ def generate_launch_description():
             parameters=[{
                 'frequency': 20,
                 'yaml_file_out': output,
-                'path_lenght': 10}],
+                'path_length': 50,
+                'client_node_name': 'nav2_wp_follower_client'
+                }],
         ),
     ])

@@ -39,7 +39,7 @@ def generate_launch_description():
     params_declare = DeclareLaunchArgument('params_file',
                                            default_value=os.path.join(
                                                share_dir, 'params', 'gps_collected_points.yaml'),
-                                           description='FPath to the ROS2 parameters file to use.')
+                                           description='Path to the ROS2 parameters file to use.')
 
     driver_node = LifecycleNode(package='husky_gps_navigation',
                                 executable='nav2_wp_follower_client',
