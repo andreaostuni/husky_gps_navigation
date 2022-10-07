@@ -25,14 +25,14 @@ def generate_launch_description():
             executable='gps_waypoint_collector',
             name='gps_waypoint_collector',
             output='screen',
-            remappings=[('/gps', '/piksi/gps/fix'),
-                        ('/imu', 'um7/imu/enu/data')],
+            remappings=[('/gps', '/gps/data'),
+                        ('/imu', '/imu/data')],
             # frequency as points per minute
             parameters=[{
                 'frequency': 20,
                 'yaml_file_out': output,
                 'path_length': 50,
                 'client_node_name': 'nav2_wp_follower_client'
-                }],
+            }],
         ),
     ])
