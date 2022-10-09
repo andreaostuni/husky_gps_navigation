@@ -23,10 +23,7 @@
 #include "nav2_lifecycle_manager/lifecycle_manager_client.hpp"
 #include "nav2_msgs/action/follow_gps_waypoints.hpp"
 #include "nav2_msgs/action/follow_waypoints.hpp"
-// #include "nav2_msgs/msg/gpsw_path_plugin.hpp"
-// #include "nav2_msgs/msg/w_path_plugin.hpp"
 #include "nav2_waypoint_follower/waypoint_follower.hpp"
-// #include "nav2_waypoint_follower/waypoint_follower_tp.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "tf2/LinearMath/Quaternion.h"
@@ -53,7 +50,7 @@ public:
   using ClientT = nav2_msgs::action::FollowGPSWaypoints;
 
   // shorten the Goal handler Client type
-  using GPSWaypointFollowerGoalHandle =
+  using ClientTGoalHandle =
       rclcpp_action::ClientGoalHandle<ClientT>;
 
   /**
@@ -106,14 +103,14 @@ public:
   loadGPSWaypointsFromYAML(const std::string current_path);
 
   void
-  goalResponseCallback(std::shared_future<GPSWaypointFollowerGoalHandle::SharedPtr> goal_handle);
+  goalResponseCallback(std::shared_future<ClientTGoalHandle::SharedPtr> goal_handle);
 
   void
-  feedbackCallback(GPSWaypointFollowerGoalHandle::SharedPtr,
+  feedbackCallback(ClientTGoalHandle::SharedPtr,
                    const std::shared_ptr<const ClientT::Feedback> feedback);
 
   void
-  resultCallback(const GPSWaypointFollowerGoalHandle::WrappedResult &result);
+  resultCallback(const ClientTGoalHandle::WrappedResult &result);
 
 protected:
   bool goal_done_;
@@ -125,7 +122,7 @@ protected:
   // goal handler to query state of goal
   ClientT::Goal gps_waypoint_follower_goal_;
 
-  GPSWaypointFollowerGoalHandle::SharedPtr gps_waypoint_follower_goalhandle_;
+  ClientTGoalHandle::SharedPtr gps_waypoint_follower_goalhandle_;
 
   std::vector<geographic_msgs::msg::GeoPose> path_from_yaml_;
 };

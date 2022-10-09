@@ -34,6 +34,7 @@ def generate_launch_description():
     share_dir = get_package_share_directory(
         'husky_gps_navigation')
     parameter_file = LaunchConfiguration('params_file')
+    use_sim_time = LaunchConfiguration('use_sim_time')
     node_name = 'nav2_wp_follower_client'
 
     params_declare = DeclareLaunchArgument('params_file',
@@ -41,15 +42,21 @@ def generate_launch_description():
                                                share_dir, 'params', 'gps_collected_points.yaml'),
                                            description='Path to the ROS2 parameters file to use.')
 
+    use_sim_declare = DeclareLaunchArgument('use_sim_time',
+                                            default_value='false',
+                                            description='Is a Gazebo simulation')
+
     driver_node = LifecycleNode(package='husky_gps_navigation',
                                 executable='nav2_wp_follower_client',
                                 name=node_name,
                                 namespace='',
                                 output='screen',
-                                parameters=[parameter_file],
+                                parameters=[parameter_file,
+                                            {'use_sim_time', use_sim_time}],
                                 )
 
     return LaunchDescription([
         params_declare,
+        use_sim_declare,
         driver_node,
     ])

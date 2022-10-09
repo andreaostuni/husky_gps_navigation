@@ -21,7 +21,7 @@ GPSWayPointFollowerClient::GPSWayPointFollowerClient()
     : Node("GPSWaypointFollowerClient"), goal_done_(false) {
   gps_waypoint_follower_action_client_ = rclcpp_action::create_client<ClientT>(
       this,
-      "follow_gps_waypoints");
+      "FollowGpsWaypoints");
   this->timer_ = this->create_wall_timer(
       std::chrono::milliseconds(500),
       std::bind(&GPSWayPointFollowerClient::startWaypointFollowing, this));
@@ -171,7 +171,7 @@ GPSWayPointFollowerClient::loadGPSWaypointsFromYAML(
 }
 
 void GPSWayPointFollowerClient::goalResponseCallback(
-    std::shared_future<GPSWaypointFollowerGoalHandle::SharedPtr> future) {
+    std::shared_future<ClientTGoalHandle::SharedPtr> future) {
   auto goal_handle = future.get();
   if (!goal_handle) {
     RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
@@ -182,14 +182,14 @@ void GPSWayPointFollowerClient::goalResponseCallback(
 }
 
 void GPSWayPointFollowerClient::feedbackCallback(
-    GPSWaypointFollowerGoalHandle::SharedPtr,
+    ClientTGoalHandle::SharedPtr,
     const std::shared_ptr<const ClientT::Feedback> feedback) {
 
   RCLCPP_INFO(this->get_logger(), "current waypoint: %i",feedback->current_waypoint);
 }
 
 void GPSWayPointFollowerClient::resultCallback(
-    const GPSWaypointFollowerGoalHandle::WrappedResult &result) {
+    const ClientTGoalHandle::WrappedResult &result) {
   this->goal_done_ = true;
   switch (result.code) {
   case rclcpp_action::ResultCode::SUCCEEDED:
