@@ -11,6 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from lib2to3.pytree import convert
+from numpy import source
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
@@ -25,6 +27,7 @@ from launch_ros.event_handlers import OnStateTransition
 from launch.actions import LogInfo
 from launch.events import matches_action
 from launch.event_handlers.on_shutdown import OnShutdown
+from nav2_common.launch import RewrittenYaml
 
 import lifecycle_msgs.msg
 import os
@@ -45,14 +48,20 @@ def generate_launch_description():
     use_sim_declare = DeclareLaunchArgument('use_sim_time',
                                             default_value='false',
                                             description='Is a Gazebo simulation')
+    param_substitutions = {'use_sim_time': use_sim_time}
+
+    configured_params = RewrittenYaml(
+        source_file=parameter_file,
+        param_rewrites=param_substitutions,
+        convert_types=True
+    )
 
     driver_node = LifecycleNode(package='husky_gps_navigation',
                                 executable='nav2_wp_follower_client',
                                 name=node_name,
                                 namespace='',
                                 output='screen',
-                                parameters=[parameter_file,
-                                            {'use_sim_time', use_sim_time}],
+                                parameters=[configured_params]
                                 )
 
     return LaunchDescription([
