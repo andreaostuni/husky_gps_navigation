@@ -28,7 +28,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/convert.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 /**
  * @brief namespace for way point following, points are from a yaml file
  *
@@ -103,7 +103,7 @@ public:
   loadGPSWaypointsFromYAML(const std::string current_path);
 
   void
-  goalResponseCallback(std::shared_future<ClientTGoalHandle::SharedPtr> goal_handle);
+  goalResponseCallback(ClientTGoalHandle::SharedPtr goal_handle);
 
   void
   feedbackCallback(ClientTGoalHandle::SharedPtr,

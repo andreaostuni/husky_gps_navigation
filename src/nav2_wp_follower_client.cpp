@@ -15,12 +15,13 @@
 #include "husky_gps_navigation/nav2_wp_follower_client.hpp"
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace husky_gps_navigation
 {
 GPSWayPointFollowerClient::GPSWayPointFollowerClient() : Node("GPSWaypointFollowerClient"), goal_done_(false)
 {
-  gps_waypoint_follower_action_client_ = rclcpp_action::create_client<ClientT>(this, "FollowGPSWaypoints");
+  gps_waypoint_follower_action_client_ = rclcpp_action::create_client<ClientT>(this, "follow_gps_waypoints");
   this->timer_ = this->create_wall_timer(std::chrono::milliseconds(500),
                                          std::bind(&GPSWayPointFollowerClient::startWaypointFollowing, this));
   // number of poses that robot will go throug, specified in yaml file
@@ -166,9 +167,9 @@ GPSWayPointFollowerClient::loadGPSWaypointsFromYAML(const std::string current_pa
   return gps_waypoint_msg_vector;
 }
 
-void GPSWayPointFollowerClient::goalResponseCallback(std::shared_future<ClientTGoalHandle::SharedPtr> future)
+void GPSWayPointFollowerClient::goalResponseCallback(ClientTGoalHandle::SharedPtr goal_handle)
 {
-  auto goal_handle = future.get();
+  // auto goal_handle = future.get();
   if (!goal_handle)
   {
     RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
